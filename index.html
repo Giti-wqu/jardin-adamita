@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Jardín Adamita — Memorias del Principio</title>
+<meta name="description" content="Antes de la ropa. Antes del nombre. Antes del miedo. Memorias del Principio es un libro de doctrina adamita.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cormorant+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dark:#0d0803;--panel:#160e06;--ink:#1a0f06;
+  --parch:#f0e3ca;--cream:#e0cfae;--sepia:#7b4f2e;
+  --gold:#c4973a;--gold2:#e8b84b;--faded:#9c7a5b;
+  --dim:#4a3020;--border:rgba(196,151,58,.15);
+  --red:#c44a3a;--redbg:rgba(196,74,58,.1);--redborder:rgba(196,74,58,.3);
+}
+html{scroll-behavior:smooth}
+body{background:var(--dark);color:var(--parch);font-family:'Cormorant Garamond',Georgia,serif;font-size:17px;line-height:1.75;min-height:100vh}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");opacity:.4}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:58px;background:rgba(13,8,3,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);gap:1rem}
+.logo{font-family:'Cormorant SC',serif;font-size:1rem;font-weight:300;letter-spacing:.18em;color:var(--gold);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.logo span{color:var(--faded);font-size:.6rem;display:block;letter-spacing:.28em;margin-top:-3px}
+.topnav{display:flex;align-items:center;gap:.1rem;flex-wrap:nowrap}
+.tnav{font-family:'Cormorant SC',serif;font-size:.68rem;letter-spacing:.2em;color:var(--faded);background:none;border:none;padding:.38rem .8rem;cursor:pointer;transition:color .2s;text-transform:uppercase;white-space:nowrap;position:relative}
+.tnav:hover,.tnav.active{color:var(--gold)}
+.tnav.active{border-bottom:1px solid var(--gold)}
+.badge{position:absolute;top:2px;right:4px;background:var(--red);color:#fff;font-size:.55rem;font-family:'Cormorant SC',serif;border-radius:50%;width:15px;height:15px;display:flex;align-items:center;justify-content:center;font-style:normal}
+.topright{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+.user-name{font-style:italic;color:var(--faded);font-size:.85rem;white-space:nowrap}
+.admin-pill{font-family:'Cormorant SC',serif;font-size:.58rem;letter-spacing:.15em;background:var(--gold);color:var(--dark);padding:.12rem .45rem;white-space:nowrap}
+.btn-login{font-family:'Cormorant SC',serif;font-size:.65rem;letter-spacing:.2em;color:var(--faded);border:1px solid var(--border);background:none;padding:.32rem .8rem;cursor:pointer;transition:all .2s;text-transform:uppercase;white-space:nowrap}
+.btn-login:hover{color:var(--gold);border-color:var(--gold)}
+.btn-register{font-family:'Cormorant SC',serif;font-size:.65rem;letter-spacing:.2em;color:var(--dark);background:var(--gold);border:1px solid var(--gold);padding:.32rem .8rem;cursor:pointer;transition:all .2s;text-transform:uppercase;white-space:nowrap}
+.btn-register:hover{background:var(--gold2)}
+.btn-signout{font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.18em;color:var(--dim);background:none;border:1px solid transparent;padding:.28rem .65rem;cursor:pointer;transition:all .2s;text-transform:uppercase;white-space:nowrap}
+.btn-signout:hover{color:var(--faded);border-color:var(--border)}
+
+/* AUTH MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:500;padding:1rem;backdrop-filter:blur(6px)}
+.modal-overlay.hidden{display:none}
+.auth-modal{background:var(--panel);border:1px solid var(--border);width:100%;max-width:420px;padding:2.6rem;position:relative}
+.modal-close{position:absolute;top:.8rem;right:.9rem;background:none;border:none;color:var(--dim);font-size:1.1rem;cursor:pointer;padding:.3rem;transition:color .2s;line-height:1}
+.modal-close:hover{color:var(--gold)}
+.modal-title{font-family:'Cormorant SC',serif;font-size:1.5rem;font-weight:300;color:var(--parch);text-align:center;margin-bottom:.35rem}
+.modal-sub{font-style:italic;color:var(--faded);text-align:center;font-size:.9rem;margin-bottom:1.8rem}
+.modal-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.8rem}
+.modal-tab{flex:1;font-family:'Cormorant SC',serif;font-size:.68rem;letter-spacing:.22em;color:var(--faded);background:none;border:none;padding:.65rem;cursor:pointer;transition:all .2s;text-transform:uppercase;border-bottom:2px solid transparent;margin-bottom:-1px}
+.modal-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-family:'Cormorant SC',serif;font-size:.6rem;letter-spacing:.28em;color:var(--faded);margin-bottom:.32rem;text-transform:uppercase}
+.form-input{width:100%;background:rgba(196,151,58,.04);border:1px solid var(--border);color:var(--parch);padding:.72rem 1rem;font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:rgba(196,151,58,.4)}
+.form-input::placeholder{color:var(--dim)}
+.btn-full{width:100%;background:var(--gold);color:var(--dark);border:none;font-family:'Cormorant SC',serif;font-size:.76rem;letter-spacing:.28em;padding:.82rem;cursor:pointer;transition:all .2s;margin-top:.4rem;text-transform:uppercase}
+.btn-full:hover{background:var(--gold2)}
+.btn-full:disabled{opacity:.45;cursor:not-allowed}
+.msg-error{background:var(--redbg);border:1px solid var(--redborder);color:#e88;padding:.62rem 1rem;font-size:.88rem;margin-bottom:.8rem}
+.msg-ok{background:rgba(58,138,90,.1);border:1px solid rgba(58,138,90,.3);color:#8e8;padding:.62rem 1rem;font-size:.88rem;margin-bottom:.8rem}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 35%,rgba(196,151,58,.07) 0%,transparent 70%)}
+.ornament{color:var(--gold);letter-spacing:.5em;margin-bottom:2.5rem;font-size:1rem}
+.hero-title{font-family:'Cormorant SC',serif;font-size:clamp(2.6rem,8vw,5.5rem);font-weight:300;letter-spacing:.08em;line-height:1.1;color:var(--parch);margin-bottom:.4rem;animation:fadeUp 1s ease forwards .3s;opacity:0}
+.hero-sub{font-size:clamp(.82rem,2vw,1rem);font-weight:300;font-style:italic;color:var(--faded);letter-spacing:.25em;text-transform:uppercase;animation:fadeUp 1s ease forwards .55s;opacity:0;margin-bottom:3rem}
+.hero-hr{width:55px;height:1px;background:var(--gold);margin:0 auto 3rem;animation:fadeUp 1s ease forwards .7s;opacity:0}
+.hero-verse{font-size:clamp(1rem,2.4vw,1.3rem);font-style:italic;font-weight:300;color:var(--cream);max-width:580px;line-height:1.95;animation:fadeUp 1s ease forwards .85s;opacity:0;margin-bottom:3.5rem}
+.hero-verse em{font-style:normal;color:var(--gold)}
+.hero-btns{animation:fadeUp 1s ease forwards 1.1s;opacity:0;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.btn-hero{font-family:'Cormorant SC',serif;font-size:.85rem;letter-spacing:.28em;text-decoration:none;padding:.95rem 2.2rem;cursor:pointer;transition:all .25s;text-transform:uppercase;border:none;display:inline-block}
+.btn-gold{background:var(--gold);color:var(--dark)}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn-ghost{color:var(--gold);background:transparent;border:1px solid rgba(196,151,58,.4)}
+.btn-ghost:hover{border-color:var(--gold);background:rgba(196,151,58,.07);transform:translateY(-2px)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTIONS */
+.sec{padding:5.5rem 2rem;max-width:820px;margin:0 auto}
+.sec-label{font-family:'Cormorant SC',serif;font-size:.68rem;letter-spacing:.4em;color:var(--gold);margin-bottom:1.8rem;display:block;text-transform:uppercase}
+.sec h2{font-family:'Cormorant SC',serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:300;color:var(--parch);line-height:1.2;margin-bottom:1.8rem}
+.sec p{font-size:clamp(.97rem,2vw,1.1rem);color:var(--cream);font-weight:300;margin-bottom:1.4rem;text-align:justify}
+.verses-block{border-left:2px solid rgba(196,151,58,.25);padding:2rem 2.5rem;margin:3rem 0;background:rgba(196,151,58,.025)}
+.verse-entry{margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.verse-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.verse-src{font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.28em;color:var(--gold);margin-bottom:.65rem;display:block}
+.verse-q{font-style:italic;font-size:clamp(1rem,2.2vw,1.22rem);color:var(--parch);line-height:1.9;margin:0;text-align:left}
+.books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));border:1px solid var(--border);margin:3rem 0}
+.book-cell{padding:1rem 1.2rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .18s}
+.book-cell:hover{background:rgba(196,151,58,.05)}
+.book-n{font-family:'Cormorant SC',serif;font-size:.58rem;letter-spacing:.22em;color:var(--gold);display:block;margin-bottom:.22rem}
+.book-t{font-size:.86rem;color:var(--faded);font-style:italic;margin:0;text-align:left}
+.dark-band{background:rgba(196,151,58,.035);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5.5rem 2rem}
+.divline{display:flex;align-items:center;gap:1.5rem;padding:0 2rem;max-width:720px;margin:0 auto}
+.divline::before,.divline::after{content:'';flex:1;height:1px;background:rgba(196,151,58,.18)}
+.divline span{color:var(--gold);font-size:.9rem;white-space:nowrap}
+
+/* CONTACT FORM */
+.contact-form{max-width:560px;margin:2rem auto 0}
+.contact-input{width:100%;background:rgba(196,151,58,.04);border:1px solid var(--border);color:var(--parch);padding:.72rem 1rem;font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;transition:border-color .2s;margin-bottom:1rem}
+.contact-input:focus{border-color:rgba(196,151,58,.4)}
+.contact-input::placeholder{color:var(--dim)}
+.contact-ta{width:100%;background:rgba(196,151,58,.04);border:1px solid var(--border);color:var(--parch);padding:.72rem 1rem;font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;resize:vertical;min-height:130px;transition:border-color .2s;margin-bottom:1rem}
+.contact-ta:focus{border-color:rgba(196,151,58,.4)}
+.contact-ta::placeholder{color:var(--dim)}
+.contact-send{background:var(--gold);color:var(--dark);border:none;font-family:'Cormorant SC',serif;font-size:.76rem;letter-spacing:.28em;padding:.82rem 2.2rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.contact-send:hover{background:var(--gold2)}
+.contact-note{font-style:italic;color:var(--dim);font-size:.83rem;margin-top:.7rem;text-align:center}
+
+/* FORUM LAYOUT */
+.app-layout{display:flex;max-width:1100px;margin:0 auto;min-height:calc(100vh - 58px)}
+.sidebar{width:225px;min-width:225px;border-right:1px solid var(--border);padding:2rem 0;display:flex;flex-direction:column;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.sb-label{font-family:'Cormorant SC',serif;font-size:.6rem;letter-spacing:.32em;color:var(--gold);padding:0 1.4rem;margin-bottom:.55rem;display:block;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:.55rem;padding:.48rem 1.4rem;cursor:pointer;color:var(--faded);font-size:.88rem;background:none;border:none;width:100%;text-align:left;transition:all .15s}
+.sb-item:hover{color:var(--parch);background:rgba(196,151,58,.05)}
+.sb-item.active{color:var(--gold);background:rgba(196,151,58,.08)}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--dim);flex-shrink:0}
+.sb-item.active .sb-dot{background:var(--gold)}
+.sb-sep{border:none;border-top:1px solid var(--border);margin:.9rem 0}
+.new-btn{margin:.9rem 1.4rem 0;background:none;border:1px solid var(--border);color:var(--gold);font-family:'Cormorant SC',serif;font-size:.66rem;letter-spacing:.2em;padding:.62rem;cursor:pointer;transition:all .2s;text-transform:uppercase;width:calc(100% - 2.8rem)}
+.new-btn:hover{background:rgba(196,151,58,.07);border-color:var(--gold)}
+.sb-stat{padding:0 1.4rem;margin-top:1.4rem}
+.stat-row{display:flex;justify-content:space-between;margin-bottom:.45rem;font-size:.83rem}
+.stat-l{color:var(--faded);font-style:italic}
+.stat-v{color:var(--gold);font-family:'Cormorant SC',serif}
+.content{flex:1;padding:2rem;min-width:0}
+
+/* POST LIST */
+.post-card{border:1px solid var(--border);background:var(--panel);padding:1.3rem 1.5rem;margin-bottom:.85rem;cursor:pointer;transition:all .18s;position:relative}
+.post-card:hover{border-color:rgba(196,151,58,.28);background:rgba(22,14,6,.9)}
+.pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.pc-title{font-family:'Cormorant SC',serif;font-size:.98rem;font-weight:400;color:var(--parch);margin-bottom:.28rem}
+.pc-preview{color:var(--faded);font-size:.87rem;line-height:1.52}
+.pc-meta{display:flex;align-items:center;gap:.75rem;margin-top:.65rem;font-size:.77rem;color:var(--dim);flex-wrap:wrap}
+.pc-author{color:var(--sepia);font-style:italic}
+.pc-author.is-admin{color:var(--gold)}
+.pc-tags{display:flex;flex-direction:column;align-items:flex-end;gap:.32rem;flex-shrink:0}
+.tag-garden{font-family:'Cormorant SC',serif;font-size:.56rem;letter-spacing:.15em;color:var(--dark);background:var(--gold);padding:.1rem .42rem}
+.tag-cat{font-family:'Cormorant SC',serif;font-size:.56rem;letter-spacing:.15em;color:var(--faded);border:1px solid var(--border);padding:.1rem .42rem}
+.pc-img{width:65px;height:48px;object-fit:cover;opacity:.7;flex-shrink:0;border:1px solid var(--border)}
+
+/* DELETE BTN */
+.del-btn{background:none;border:none;color:rgba(196,74,58,.4);cursor:pointer;font-size:.85rem;padding:.2rem .4rem;transition:color .2s;line-height:1;flex-shrink:0}
+.del-btn:hover{color:var(--red)}
+
+/* POST DETAIL */
+.back-btn{background:none;border:none;color:var(--faded);font-family:'Cormorant Garamond',serif;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:.4rem;margin-bottom:1.5rem;padding:0;transition:color .2s}
+.back-btn:hover{color:var(--gold)}
+.pf{border:1px solid var(--border);background:var(--panel);padding:2rem;margin-bottom:2rem;position:relative}
+.pf-title{font-family:'Cormorant SC',serif;font-size:1.3rem;font-weight:300;color:var(--parch);margin-bottom:.75rem}
+.pf-body{color:var(--cream);font-size:1rem;line-height:1.8;white-space:pre-wrap}
+.pf-images{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.1rem}
+.pf-img{max-width:230px;max-height:190px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+.pf-meta{margin-top:1.1rem;padding-top:.9rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--dim);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.replies-hdr{font-family:'Cormorant SC',serif;font-size:.7rem;letter-spacing:.26em;color:var(--gold);margin-bottom:1rem;text-transform:uppercase}
+.reply-card{border-left:2px solid var(--border);padding:1rem 1.3rem;margin-bottom:.85rem;background:rgba(22,14,6,.42);position:relative}
+.reply-card.is-admin{border-left-color:var(--gold);background:rgba(196,151,58,.032)}
+.reply-hdr{display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem;flex-wrap:wrap}
+.reply-author{font-size:.82rem;color:var(--sepia);font-style:italic}
+.reply-author.is-admin{color:var(--gold)}
+.reply-pill{font-family:'Cormorant SC',serif;font-size:.54rem;letter-spacing:.15em;color:var(--dark);background:var(--gold);padding:.08rem .38rem}
+.reply-date{font-size:.74rem;color:var(--dim);margin-left:auto}
+.reply-body{color:var(--cream);font-size:.95rem;line-height:1.72;white-space:pre-wrap}
+.reply-imgs{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.75rem}
+.reply-img{max-width:170px;max-height:140px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+
+/* REPLY FORM */
+.reply-form{margin-top:2rem;border:1px solid var(--border);background:var(--panel);padding:1.4rem}
+.reply-lbl{font-family:'Cormorant SC',serif;font-size:.63rem;letter-spacing:.26em;color:var(--gold);display:block;margin-bottom:.5rem;text-transform:uppercase}
+.reply-ta{width:100%;background:rgba(196,151,58,.033);border:1px solid var(--border);color:var(--parch);padding:.72rem 1rem;font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;resize:vertical;min-height:85px;transition:border-color .2s}
+.reply-ta:focus{border-color:rgba(196,151,58,.35)}
+.reply-ta::placeholder{color:var(--dim)}
+.upload-row{display:flex;align-items:center;gap:.75rem;margin-top:.65rem}
+.upload-btn{font-family:'Cormorant SC',serif;font-size:.63rem;letter-spacing:.18em;color:var(--faded);background:none;border:1px solid var(--border);padding:.38rem .85rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.upload-btn:hover{color:var(--gold);border-color:var(--gold)}
+.upload-note{font-style:italic;color:var(--dim);font-size:.81rem}
+.img-previews{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.55rem}
+.img-preview-item{position:relative;display:inline-block}
+.img-preview-item img{width:68px;height:52px;object-fit:cover;border:1px solid var(--border)}
+.img-remove{position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--dark);border:1px solid var(--border);color:var(--faded);font-size:.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.img-remove:hover{color:var(--gold);border-color:var(--gold)}
+.send-btn{background:var(--gold);color:var(--dark);border:none;font-family:'Cormorant SC',serif;font-size:.7rem;letter-spacing:.2em;padding:.62rem 1.7rem;cursor:pointer;transition:all .2s;text-transform:uppercase;margin-top:.75rem}
+.send-btn:hover{background:var(--gold2)}
+.send-btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* PRIVATE MESSAGE FORM */
+.msg-form-wrap{border:1px solid var(--border);background:var(--panel);padding:1.4rem;margin-top:1.5rem}
+.msg-form-title{font-family:'Cormorant SC',serif;font-size:.65rem;letter-spacing:.25em;color:var(--gold);display:block;margin-bottom:.8rem;text-transform:uppercase}
+
+/* NEW POST */
+.np{max-width:600px}
+.np-title{font-family:'Cormorant SC',serif;font-size:1.2rem;font-weight:300;color:var(--parch);margin-bottom:.28rem}
+.np-sub{color:var(--faded);font-style:italic;font-size:.88rem;margin-bottom:1.8rem}
+.cats-row{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.4rem}
+.cat-btn{font-family:'Cormorant SC',serif;font-size:.6rem;letter-spacing:.18em;padding:.28rem .75rem;cursor:pointer;border:1px solid var(--border);background:none;color:var(--faded);transition:all .15s;text-transform:uppercase}
+.cat-btn:hover,.cat-btn.sel{color:var(--gold);border-color:var(--gold);background:rgba(196,151,58,.06)}
+
+/* COMPARTIR GATE */
+.compartir-gate{text-align:center;padding:3.5rem 2rem}
+.cg-lock{font-size:2.5rem;margin-bottom:1rem;opacity:.3}
+.cg-title{font-family:'Cormorant SC',serif;font-size:1.2rem;font-weight:300;color:var(--parch);margin-bottom:.6rem}
+.cg-sub{color:var(--faded);font-style:italic;font-size:.92rem;max-width:400px;margin:0 auto 2rem}
+.cg-btn{font-family:'Cormorant SC',serif;font-size:.72rem;letter-spacing:.22em;background:var(--gold);color:var(--dark);border:none;padding:.75rem 2rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.cg-btn:hover{background:var(--gold2)}
+.cg-btn.ghost{background:none;color:var(--faded);border:1px solid var(--border)}
+.cg-btn.ghost:hover{color:var(--gold);border-color:var(--gold)}
+.cg-pending{font-style:italic;color:var(--faded);font-size:.9rem;padding:1rem;border:1px solid var(--border);}
+
+/* MENSAJES (INBOX ADMIN) */
+.inbox-header{margin-bottom:1.5rem}
+.inbox-title{font-family:'Cormorant SC',serif;font-size:1.2rem;font-weight:300;color:var(--parch);margin-bottom:.22rem}
+.inbox-sub{color:var(--faded);font-style:italic;font-size:.88rem}
+.msg-card{border:1px solid var(--border);background:var(--panel);padding:1.2rem 1.4rem;margin-bottom:.8rem;transition:all .18s}
+.msg-card.unread{border-color:rgba(196,151,58,.3);background:rgba(196,151,58,.035)}
+.msg-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.msg-from{font-family:'Cormorant SC',serif;font-size:.88rem;color:var(--gold);margin-bottom:.25rem}
+.msg-preview{color:var(--faded);font-size:.87rem;line-height:1.5}
+.msg-date{font-size:.76rem;color:var(--dim);flex-shrink:0}
+.msg-actions{display:flex;gap:.5rem;margin-top:.75rem}
+.msg-expand{background:none;border:none;color:var(--faded);font-family:'Cormorant Garamond',serif;font-size:.87rem;cursor:pointer;padding:0;transition:color .2s;text-decoration:underline;text-underline-offset:3px}
+.msg-expand:hover{color:var(--gold)}
+.msg-full{margin-top:.9rem;padding-top:.9rem;border-top:1px solid var(--border);color:var(--cream);font-size:.95rem;line-height:1.75;white-space:pre-wrap}
+.msg-imgs{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.7rem}
+.msg-img{max-width:160px;max-height:130px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+
+/* SOLICITUDES COMPARTIR (ADMIN) */
+.sol-card{border:1px solid var(--border);background:var(--panel);padding:1rem 1.3rem;margin-bottom:.7rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.sol-name{font-family:'Cormorant SC',serif;font-size:.92rem;color:var(--parch)}
+.sol-date{font-size:.76rem;color:var(--dim);font-style:italic}
+.sol-btns{display:flex;gap:.5rem}
+.sol-ok{background:rgba(58,138,90,.15);border:1px solid rgba(58,138,90,.3);color:#8e8;font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.15em;padding:.3rem .8rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.sol-ok:hover{background:rgba(58,138,90,.25)}
+.sol-no{background:var(--redbg);border:1px solid var(--redborder);color:#e88;font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.15em;padding:.3rem .8rem;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.sol-no:hover{background:rgba(196,74,58,.2)}
+
+/* LIGHTBOX */
+
+/* ── WATERMARK & PROTECTED IMAGES ── */
+.protected-wrap{position:relative;display:inline-block;user-select:none;cursor:pointer;overflow:hidden}
+.protected-wrap img{display:block;pointer-events:none;user-select:none;-webkit-user-drag:none;draggable:false}
+.wm-overlay{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2}
+.wm-inner{position:absolute;inset:-50%;transform:rotate(-28deg);display:flex;flex-direction:column;gap:0;opacity:1}
+.wm-row{display:flex;gap:0;white-space:nowrap}
+.wm-text{color:rgba(255,255,255,.22);font-size:13px;font-family:'Cormorant Garamond',serif;font-style:italic;letter-spacing:.08em;padding:18px 22px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.admin-img-wrap{position:relative;display:inline-block;cursor:pointer}
+.admin-img-wrap img{display:block}
+.dl-btn{position:absolute;bottom:4px;right:4px;background:rgba(13,8,3,.8);border:1px solid var(--gold);color:var(--gold);font-size:.7rem;font-family:'Cormorant SC',serif;letter-spacing:.15em;padding:.22rem .5rem;cursor:pointer;transition:all .2s;text-decoration:none;z-index:3;text-transform:uppercase}
+.dl-btn:hover{background:var(--gold);color:var(--dark)}
+.photo-views{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--border)}
+.pv-label{font-family:'Cormorant SC',serif;font-size:.6rem;letter-spacing:.28em;color:var(--gold);display:block;margin-bottom:.5rem;text-transform:uppercase}
+.pv-item{font-size:.8rem;color:var(--faded);font-style:italic;margin-bottom:.22rem}
+/* LIGHTBOX non-admin */
+.lb-wm-overlay{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3}
+.lb-wm-inner{position:absolute;inset:-50%;transform:rotate(-28deg);display:flex;flex-direction:column;gap:0}
+.lb-dl-btn{position:absolute;bottom:1.2rem;right:1.2rem;background:rgba(13,8,3,.85);border:1px solid var(--gold);color:var(--gold);font-family:'Cormorant SC',serif;font-size:.7rem;letter-spacing:.2em;padding:.5rem 1.2rem;cursor:pointer;text-decoration:none;z-index:10;text-transform:uppercase;transition:all .2s}
+.lb-dl-btn:hover{background:var(--gold);color:var(--dark)}
+
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.lightbox.hidden{display:none}
+.lightbox img{max-width:92vw;max-height:92vh;object-fit:contain;border:1px solid var(--border)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--dim);font-size:.77rem;font-style:italic;letter-spacing:.1em}
+
+/* MISC */
+.empty{text-align:center;padding:3.5rem 2rem;color:var(--faded)}
+.empty-orn{font-size:2rem;color:var(--border);margin-bottom:.9rem}
+.empty-t{font-family:'Cormorant SC',serif;font-size:.98rem;color:var(--dim);margin-bottom:.35rem}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--dark)}
+::-webkit-scrollbar-thumb{background:var(--dim)}
+
+@media(max-width:700px){
+  .sidebar{display:none}
+  .topbar{padding:0 .8rem;gap:.5rem}
+  .logo span{display:none}
+  .tnav{padding:.35rem .5rem;font-size:.62rem;letter-spacing:.12em}
+  .content{padding:1rem}
+  .hero{padding:4.5rem 1.5rem 3.5rem}
+  .sec{padding:3.5rem 1.5rem}
+  .hero-btns{flex-direction:column;align-items:center}
+  .btn-hero{width:100%;max-width:280px;text-align:center}
+  .topright .user-name{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="lightbox hidden" id="lightbox" onmousedown="if(event.target===this)closeLightbox()">
+  <div style="position:relative;max-width:92vw;max-height:92vh;" onclick="closeLightbox()">
+    <img id="lightboxImg" src="" alt="" style="max-width:92vw;max-height:92vh;object-fit:contain;border:1px solid var(--border);display:block;">
+    <div class="lb-wm-overlay" id="lbWm" style="display:none;">
+      <div class="lb-wm-inner" id="lbWmInner"></div>
+    </div>
+  </div>
+  <button class="lb-dl-btn" id="lbDlBtn" style="display:none;" onclick="downloadImage(currentLbUrl)">⬇ Descargar</button>
+  <div style="position:absolute;bottom:.6rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.2);font-size:.7rem;font-style:italic;pointer-events:none;">Clic para cerrar</div>
+</div>
+
+<div class="modal-overlay hidden" id="authModal">
+  <div class="auth-modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">El Jardín</div>
+    <div class="modal-sub">Para participar en el foro</div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" id="tabLogin" onclick="switchTab('login')">Entrar</button>
+      <button class="modal-tab" id="tabReg" onclick="switchTab('register')">Unirse</button>
+    </div>
+    <div id="authMsg"></div>
+    <div id="usernameRow" class="form-group" style="display:none">
+      <label class="form-label">Tu nombre en el jardín</label>
+      <input class="form-input" id="fUsername" placeholder="Cómo te conocerán aquí">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="fEmail" type="email" placeholder="tu@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input class="form-input" id="fPass" type="password" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')doAuth()">
+    </div>
+    <button class="btn-full" id="authBtn" onclick="doAuth()">Entrar</button>
+  </div>
+</div>
+
+<div id="root"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURACIÓN
+// ══════════════════════════════════════════
+const SB_URL    = 'https://fyosedvcdsfxgerysixb.supabase.co'
+const SB_ANON   = 'sb_publishable_UfOqWAj0TfPyVQK_g0wcKQ_eHqV-BDU'
+const ADMIN     = 'jardinadamita@proton.me'
+const AMAZON_ES = 'https://www.amazon.es/dp/B0H33WHVJJ'
+const AMAZON_EN = 'https://www.amazon.com/s?k=Memories+of+the+Beginning+Those+Who+Remember'
+
+const sb = supabase.createClient(SB_URL, SB_ANON)
+
+let S = {
+  user:null, profile:null, isAdmin:false,
+  page:'home', view:'list',
+  posts:[], post:null, replies:[],
+  category:null,
+  stats:{posts:0,members:0},
+  postFiles:[], replyFiles:[], msgFiles:[],
+  messages:[], unreadCount:0,
+  solicitudes:[],
+  compartirAccess:null,   // null=no comprobado, 'approved'|'pending'|'denied'|'none'
+  expandedMsgs:{},
+  afterLogin:null,
+  usuarios:[],
+  visitStats:null,
+}
+let authMode='login'
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+async function init(){
+  const {data:{session}}=await sb.auth.getSession()
+  if(session?.user) await signedIn(session.user)
+  render()
+  // Log this visit (anónimo o registrado)
+  setTimeout(async()=>{
+    await sb.from('visits').insert({is_registered:!!S.user})
+  }, 1500)
+
+  sb.auth.onAuthStateChange(async(ev,session)=>{
+    if(ev==='SIGNED_IN'){
+      await signedIn(session.user); closeModal()
+      if(S.afterLogin){const f=S.afterLogin;S.afterLogin=null;await f()}
+      else{await loadPosts();await loadStats();render()}
+    }
+    if(ev==='SIGNED_OUT'){
+      Object.assign(S,{user:null,profile:null,isAdmin:false,page:'home',
+        messages:[],unreadCount:0,solicitudes:[],compartirAccess:null})
+      render()
+    }
+  })
+}
+
+async function signedIn(user){
+  S.user=user; S.isAdmin=user.email===ADMIN
+  const{data}=await sb.from('profiles').select('*').eq('id',user.id).single()
+  if(data){
+    S.profile=data
+    // Update last seen
+    sb.from('profiles').update({last_seen_at:new Date().toISOString(),email:user.email}).eq('id',user.id)
+    return
+  }
+  const username=S.isAdmin?'El Jardín':user.email.split('@')[0]
+  const{data:p}=await sb.from('profiles').insert({id:user.id,username,is_admin:S.isAdmin,email:user.email}).select().single()
+  S.profile=p
+}
+
+async function loadPosts(){
+  let q=sb.from('posts').select('*, profiles(username,is_admin), replies(count)').order('created_at',{ascending:false})
+  if(S.category) q=q.eq('category',S.category)
+  const{data}=await q; S.posts=data||[]
+}
+async function loadPost(id){
+  const[{data:p},{data:r}]=await Promise.all([
+    sb.from('posts').select('*, profiles(username,is_admin)').eq('id',id).single(),
+    sb.from('replies').select('*, profiles(username,is_admin)').eq('post_id',id).order('created_at',{ascending:true})
+  ]); S.post=p; S.replies=r||[]
+}
+async function loadStats(){
+  const[{count:posts},{count:members}]=await Promise.all([
+    sb.from('posts').select('*',{count:'exact',head:true}),
+    sb.from('profiles').select('*',{count:'exact',head:true})
+  ]); S.stats={posts:posts||0,members:members||0}
+}
+async function loadMessages(){
+  const{data}=await sb.from('private_messages').select('*, profiles(username)').order('created_at',{ascending:false})
+  S.messages=data||[]
+  S.unreadCount=S.messages.filter(m=>!m.is_read).length
+}
+async function loadSolicitudes(){
+  const{data}=await sb.from('compartir_access').select('*, profiles(username)').eq('status','pending').order('created_at',{ascending:true})
+  S.solicitudes=data||[]
+}
+
+async function loadUsuarios(){
+  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false})
+  S.usuarios=data||[]
+}
+
+async function loadVisitStats(){
+  const{data}=await sb.from('visits').select('is_registered, visited_at').order('visited_at',{ascending:false})
+  if(!data){S.visitStats=null;return}
+  const now=new Date()
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate())
+  const week=new Date(today); week.setDate(week.getDate()-7)
+  S.visitStats={
+    totalAll: data.length,
+    totalAnon: data.filter(v=>!v.is_registered).length,
+    totalReg: data.filter(v=>v.is_registered).length,
+    todayAll: data.filter(v=>new Date(v.visited_at)>=today).length,
+    todayAnon: data.filter(v=>!v.is_registered&&new Date(v.visited_at)>=today).length,
+    weekAll: data.filter(v=>new Date(v.visited_at)>=week).length,
+    weekAnon: data.filter(v=>!v.is_registered&&new Date(v.visited_at)>=week).length,
+    last10: data.slice(0,10)
+  }
+}
+async function checkCompartirAccess(){
+  if(!S.user){S.compartirAccess='none';return}
+  const{data}=await sb.from('compartir_access').select('status').eq('user_id',S.user.id).single()
+  S.compartirAccess=data?data.status:'none'
+}
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function render(){ document.getElementById('root').innerHTML=topbar()+body() }
+
+function topbar(){
+  const unread=S.unreadCount>0?`<span class="badge">${S.unreadCount}</span>`:''
+  const adminNav=S.isAdmin?`<button class="tnav ${S.page==='inbox'?'active':''}" onclick="goInbox()">Mensajes${unread}</button><button class="tnav ${S.page==='solicitudes'?'active':''}" onclick="goSolicitudes()">Solicitudes</button><button class="tnav ${S.page==='usuarios'?'active':''}" onclick="goUsuarios()">Usuarios</button><button class="tnav ${S.page==='visitas'?'active':''}" onclick="goVisitas()">Visitas</button>`
+    :''
+  const right=S.user?`
+    <div class="topright">
+      <span class="user-name">${esc(S.profile?.username||'')}</span>
+      ${S.isAdmin?'<span class="admin-pill">El Jardín</span>':''}
+      <button class="btn-signout" onclick="sb.auth.signOut()">Salir</button>
+    </div>
+  `:`
+    <div class="topright">
+      <button class="btn-login" onclick="openModal('login')">Entrar</button>
+      <button class="btn-register" onclick="openModal('register')">Unirse</button>
+    </div>
+  `
+  return `<header class="topbar">
+    <div class="logo" onclick="goHome()">El Jardín <span>Comunidad Adamita</span></div>
+    <nav class="topnav">
+      <button class="tnav ${S.page==='home'?'active':''}" onclick="goHome()">Inicio</button>
+      <button class="tnav ${S.page==='forum'?'active':''}" onclick="goForum()">Foro</button>
+      <button class="tnav" onclick="scrollToContact()">Escribir</button>
+      ${adminNav}
+    </nav>
+    ${right}
+  </header>`
+}
+
+function body(){
+  if(S.page==='home') return homePage()
+  if(S.page==='forum') return forumPage()
+  if(S.page==='inbox') return inboxPage()
+  if(S.page==='solicitudes') return solicitudesPage()
+  if(S.page==='usuarios') return usuariosPage()
+  if(S.page==='visitas') return visitasPage()
+  return homePage()
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+function homePage(){
+  const books=[
+    ['I','Del Estado Original'],['II','Del Cuerpo'],['III','Del Deseo y del Cuerpo Honesto'],
+    ['IV','De la Ropa como Primer Olvido'],['V','De la Verdad y la Palabra'],['VI','De la Comunidad'],
+    ['VII','De la Vida Justa'],['VIII','De los Ritos'],['IX','De las Prohibiciones'],
+    ['X','De la Serpiente'],['XI','Del Jardín y de Dios'],['XII','De Cómo se Difunde lo que Vale'],
+    ['XIII','Del Silencio'],['XIV','Del Tiempo'],['XV','De la Naturaleza'],
+    ['XVI','De la Muerte'],['XVII','De los Hijos'],['XVIII','Del Miedo'],
+    ['XIX','Del Amor y las Relaciones'],['XX','De la Soledad'],['XXI','De la Enfermedad y el Dolor'],
+    ['XXII','De la Belleza'],['XXIII','De la Historia Viva'],['XXIV','De la Alegría']
+  ]
+  return `<div>
+    <section class="hero">
+      <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+      <h1 class="hero-title">Memorias<br>del Principio</h1>
+      <p class="hero-sub">Escrituras de los que Recuerdan</p>
+      <div class="hero-hr"></div>
+      <p class="hero-verse">Antes de la ropa. Antes del nombre. Antes del miedo.<br>
+      Había un momento en que el ser humano<br>era <em>una sola cosa consigo mismo.</em></p>
+      <div class="hero-btns">
+        <a class="btn-hero btn-gold" href="${AMAZON_ES}" target="_blank">Conseguir el libro (ES)</a>
+        <a class="btn-hero btn-ghost" href="${AMAZON_EN}" target="_blank">Get the book (EN)</a>
+      </div>
+    </section>
+    <div class="divline"><span>✦</span></div>
+    <section class="sec" id="doctrina">
+      <span class="sec-label">La Doctrina</span>
+      <h2>El jardín no está perdido</h2>
+      <p>Los adamitas llevan dos mil años siendo perseguidos por una idea insoportablemente simple: que el ser humano nació entero, puro y sin vergüenza, y puede recuperar ese estado.</p>
+      <p>Este libro no es historia. Es doctrina viva. No una obra académica sobre el adamismo histórico, sino el texto que esos movimientos nunca pudieron escribir: los libros de escrituras que abarcan el cuerpo, el deseo, la ropa como símbolo de olvido, la comunidad sin jerarquía, el miedo, el amor y la alegría.</p>
+      <p>La doctrina no exige creer en ningún dios. No exige comunidad. No exige ninguna práctica inmediata. Solo pide honestidad: la disposición de mirarte sin añadir ni quitar nada.</p>
+      <div class="verses-block">
+        <div class="verse-entry"><span class="verse-src">Libro I — Del Estado Original</span>
+          <p class="verse-q">La Caída no fue un castigo divino. Fue el primer olvido. El día en que el ser humano aprendió a tener vergüenza de lo que era, comenzó a construir muros entre él y el mundo.</p></div>
+        <div class="verse-entry"><span class="verse-src">Libro IV — De la Ropa como Primer Olvido</span>
+          <p class="verse-q">La ropa no es un pecado. Es algo más sutil y más triste: es un símbolo viviente del olvido. Cada prenda que llevas es una capa de distancia entre lo que eres y lo que recuerdas ser.</p></div>
+        <div class="verse-entry"><span class="verse-src">Libro XVIII — Del Miedo</span>
+          <p class="verse-q">El cuerpo desnudo asusta porque no tiene dónde esconder el miedo. La ropa guarda posturas. El cuerpo sin tela es simplemente lo que es.</p></div>
+        <div class="verse-entry"><span class="verse-src">Meditaciones Finales</span>
+          <p class="verse-q">Tú eres la frase. Todo lo demás fue paréntesis.</p></div>
+      </div>
+    </section>
+    <div class="dark-band">
+      <div style="max-width:820px;margin:0 auto;">
+        <span class="sec-label" style="display:block;margin-bottom:1.8rem;">El libro</span>
+        <h2 style="font-family:'Cormorant SC',serif;font-size:clamp(1.7rem,4vw,2.5rem);font-weight:300;color:var(--parch);margin-bottom:1.8rem;">24 libros de doctrina</h2>
+        <p style="color:var(--cream);font-weight:300;margin-bottom:.5rem;font-size:1.05rem;">Desde el estado original hasta la alegría, el libro recorre cada dimensión de la vida humana a través de versículos cortos con el peso de dos milenios de pensamiento suprimido.</p>
+        <p style="color:var(--faded);font-style:italic;margin-bottom:2rem;font-size:.95rem;">Incluye El Camino de Vuelta — quince ejercicios prácticos —, la Cronología Adamita, el Glosario y las Preguntas del Jardín.</p>
+        <div class="books-grid">${books.map(([n,t])=>`<div class="book-cell"><span class="book-n">Libro ${n}</span><p class="book-t">${t}</p></div>`).join('')}</div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.5rem;">
+          <a class="btn-hero btn-gold" href="${AMAZON_ES}" target="_blank" style="display:inline-block;">Comprar en Amazon ES</a>
+          <a class="btn-hero btn-ghost" href="${AMAZON_EN}" target="_blank" style="display:inline-block;">Buy on Amazon EN</a>
+        </div>
+      </div>
+    </div>
+    <section class="sec" style="text-align:center;">
+      <span class="sec-label">La Comunidad</span>
+      <h2>El foro del jardín</h2>
+      <p style="max-width:520px;margin:0 auto 2rem;text-align:center;">Un lugar para los que recuerdan. Comparte, pregunta, sube fotos, responde. El registro es gratuito.</p>
+      <button class="btn-hero btn-gold" onclick="goForum()" style="border:none;cursor:pointer;">Entrar al foro</button>
+    </section>
+    <div class="divline" style="margin:0 auto;max-width:720px;padding:0 2rem;"><span>✦</span></div>
+    <section class="sec" id="contacto">
+      <span class="sec-label">Escribir al Jardín</span>
+      <h2>El jardín escucha</h2>
+      <p style="max-width:540px;">Si tienes una pregunta, algo que quieras compartir directamente o simplemente quieres decir que algo de estas páginas te ha sonado a memoria — escribe aquí. No hace falta cuenta.</p>
+      <div class="contact-form">
+        <input class="contact-input" id="cName" placeholder="Tu nombre (opcional)">
+        <input class="contact-input" id="cEmail" type="email" placeholder="Tu email (para que pueda responderte)">
+        <textarea class="contact-ta" id="cMsg" placeholder="Escribe aquí..."></textarea>
+        <div id="cStatus"></div>
+        <button class="contact-send" onclick="sendContact()">Enviar al jardín</button>
+        <p class="contact-note">El mensaje llega directamente a ${ADMIN}</p>
+      </div>
+    </section>
+    <footer>Memorias del Principio · Los que Recuerdan · Primera edición, 2026</footer>
+  </div>`
+}
+
+// ══════════════════════════════════════════
+// FORO
+// ══════════════════════════════════════════
+function forumPage(){
+  if(!S.user) return `<div class="empty" style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <div class="empty-orn">✦</div>
+    <div class="empty-t" style="font-size:1.2rem;">El Foro del Jardín</div>
+    <p style="color:var(--faded);font-style:italic;margin:.8rem 0 2rem;max-width:380px;text-align:center;">Para leer y participar necesitas una cuenta gratuita.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-hero btn-gold" style="border:none;" onclick="openModal('login')">Entrar</button>
+      <button class="btn-hero btn-ghost" style="cursor:pointer;" onclick="openModal('register')">Unirse al jardín</button>
+    </div>
+  </div>`
+
+  const cats=[null,'doctrina','cuerpo','práctica','historia','preguntas','compartir']
+  const catLabel={null:'Todo el jardín',doctrina:'Doctrina',cuerpo:'El Cuerpo','práctica':'Práctica',historia:'Historia Adamita',preguntas:'Preguntas',compartir:'🔒 Compartir'}
+  const sidebar=`<div class="sidebar">
+    <span class="sb-label" style="padding:1.5rem 1.4rem .55rem;">Categorías</span>
+    ${cats.map(c=>`<button class="sb-item ${S.category===c?'active':''}" onclick="setCategory(${c?`'${c}'`:'null'})">
+      <span class="sb-dot"></span>${catLabel[c]||c}</button>`).join('')}
+    <hr class="sb-sep">
+    <button class="new-btn" onclick="S.view='new';S.postFiles=[];render()">+ Nueva entrada</button>
+    ${S.isAdmin?`<button class="new-btn" style="margin-top:.5rem;color:var(--faded);" onclick="goSolicitudes()">Ver solicitudes compartir</button>`:''}
+    <div class="sb-stat">
+      <span class="sb-label" style="margin-top:.5rem;">El jardín</span>
+      <div class="stat-row"><span class="stat-l">Miembros</span><span class="stat-v">${S.stats.members}</span></div>
+      <div class="stat-row"><span class="stat-l">Entradas</span><span class="stat-v">${S.stats.posts}</span></div>
+    </div>
+  </div>`
+
+  let main=''
+  if(S.view==='list') main=postList()
+  else if(S.view==='post') main=postDetail()
+  else if(S.view==='new') main=newPost()
+  return `<div class="app-layout">${sidebar}<div class="content">${main}</div></div>`
+}
+
+function postList(){
+  // Filter compartir if no access
+  let posts=S.posts
+  if(S.category==='compartir'&&!S.isAdmin&&S.compartirAccess!=='approved'){
+    return compartirGate()
+  }
+  if(!posts.length) return `<div class="empty"><div class="empty-orn">✦</div><div class="empty-t">El jardín está en silencio</div><p style="color:var(--dim);font-size:.87rem;margin-top:.35rem;">Sé el primero en escribir.</p></div>`
+  return `<div style="margin-bottom:1.4rem;">
+    <div style="font-family:'Cormorant SC',serif;font-size:1.15rem;font-weight:300;color:var(--parch);margin-bottom:.22rem;">El Foro del Jardín</div>
+    <div style="color:var(--faded);font-style:italic;font-size:.88rem;">Un lugar para los que recuerdan</div>
+  </div>
+  ${posts.map(p=>{
+    const imgs=tryParse(p.image_urls)
+    return `<div class="post-card" onclick="openPost('${p.id}')">
+      <div class="pc-top">
+        <div style="flex:1;min-width:0;">
+          <div class="pc-title">${esc(p.title)}</div>
+          <div class="pc-preview">${esc((p.content||'').slice(0,120))}${(p.content||'').length>120?'…':''}</div>
+          <div class="pc-meta">
+            <span class="pc-author ${p.profiles?.is_admin?'is-admin':''}">${esc(p.profiles?.username||'Anónimo')}</span>
+            <span>·</span><span>${fmtDate(p.created_at)}</span>
+            <span>·</span><span>${p.replies?.[0]?.count||0} respuestas</span>
+          </div>
+        </div>
+        <div class="pc-tags">
+          ${p.has_garden_reply?'<span class="tag-garden">El Jardín respondió</span>':''}
+          ${p.category?`<span class="tag-cat">${p.category}</span>`:''}
+        </div>
+        ${imgs.length?protectedImg(imgs[0],p.id,true):''}
+        ${S.isAdmin?`<button class="del-btn" onclick="event.stopPropagation();deletePost('${p.id}')" title="Borrar entrada">✕</button>`:''}
+      </div>
+    </div>`
+  }).join('')}`
+}
+
+function compartirGate(){
+  if(S.compartirAccess==='pending') return `<div class="compartir-gate">
+    <div class="cg-lock">🔒</div>
+    <div class="cg-title">Zona privada — Compartir</div>
+    <div class="cg-pending">Tu solicitud de acceso está pendiente.<br>El jardín decidirá pronto.</div>
+  </div>`
+  if(S.compartirAccess==='denied') return `<div class="compartir-gate">
+    <div class="cg-lock">🔒</div>
+    <div class="cg-title">Acceso no concedido</div>
+    <p class="cg-sub">El jardín ha revisado tu solicitud y no ha podido concederte acceso en este momento.</p>
+  </div>`
+  return `<div class="compartir-gate">
+    <div class="cg-lock">🔒</div>
+    <div class="cg-title">Zona privada — Compartir</div>
+    <p class="cg-sub">Esta sección es privada. El jardín decide a quién se le abre. Si quieres entrar, solicita acceso.</p>
+    <button class="cg-btn" onclick="requestCompartirAccess()">Solicitar acceso al jardín</button>
+  </div>`
+}
+
+function postDetail(){
+  const p=S.post; if(!p) return '<div style="color:var(--faded);font-style:italic;padding:2rem;">Cargando...</div>'
+  const pImgs=tryParse(p.image_urls)
+  return `<div style="max-width:700px;">
+    <button class="back-btn" onclick="backToList()">← Volver al foro</button>
+    <div class="pf">
+      <div class="pf-title">${esc(p.title)}</div>
+      <div class="pf-body">${esc(p.content)}</div>
+      ${pImgs.length?`<div class="pf-images">${pImgs.map(u=>protectedImg(u,p.id)).join('')}</div>`:''}
+      <div class="pf-meta">
+        <span style="${p.profiles?.is_admin?'color:var(--gold)':'color:var(--sepia)'};font-style:italic;">${esc(p.profiles?.username||'Anónimo')}</span>
+        <span>· ${fmtDate(p.created_at)} ${p.category?`· <span style="font-family:'Cormorant SC',serif;font-size:.7rem;color:var(--faded);">${p.category}</span>`:''}</span>
+        ${S.isAdmin?`<button class="del-btn" onclick="deletePost('${p.id}')" title="Borrar entrada" style="margin-left:auto;">✕ Borrar entrada</button>`:''}
+      </div>
+      ${S.isAdmin&&pImgs.length?`<div class="photo-views" id="pvSection">
+        <span class="pv-label">👁 Cargando vistas...</span>
+      </div>`:''}
+    </div>
+    <div class="replies-hdr">${S.replies.length} RESPUESTA${S.replies.length!==1?'S':''}</div>
+    ${!S.replies.length?'<p style="color:var(--dim);font-style:italic;font-size:.87rem;margin-bottom:1.4rem;">Aún no hay respuestas.</p>':''}
+    ${S.replies.map(r=>{
+      const rImgs=tryParse(r.image_urls)
+      return `<div class="reply-card ${r.profiles?.is_admin?'is-admin':''}">
+        <div class="reply-hdr">
+          <span class="reply-author ${r.profiles?.is_admin?'is-admin':''}">${esc(r.profiles?.username||'Anónimo')}</span>
+          ${r.profiles?.is_admin?'<span class="reply-pill">El Jardín</span>':''}
+          <span class="reply-date">${fmtDate(r.created_at)}</span>
+          ${S.isAdmin?`<button class="del-btn" onclick="deleteReply('${r.id}')" title="Borrar respuesta" style="margin-left:auto;">✕</button>`:''}
+        </div>
+        <div class="reply-body">${esc(r.content)}</div>
+        ${rImgs.length?`<div class="reply-imgs">${rImgs.map(u=>protectedImg(u,p.id)).join('')}</div>`:''}
+      </div>`
+    }).join('')}
+    <div class="reply-form">
+      <span class="reply-lbl">Tu respuesta</span>
+      <textarea class="reply-ta" id="replyText" placeholder="Escribe aquí..."></textarea>
+      <div class="upload-row">
+        <input type="file" id="replyFiles" multiple accept="image/*" style="display:none" onchange="previewFiles(this,'reply')">
+        <button class="upload-btn" onclick="document.getElementById('replyFiles').click()">📷 Fotos</button>
+        <span class="upload-note">Hasta 4 imágenes</span>
+      </div>
+      <div class="img-previews" id="replyPreviews"></div>
+      <button class="send-btn" id="replyBtn" onclick="submitReply()">Enviar respuesta</button>
+    </div>
+    ${S.user&&!S.isAdmin?privateMsgForm():''}
+  </div>`
+}
+
+function privateMsgForm(){
+  return `<div class="msg-form-wrap">
+    <span class="msg-form-title">📬 Mensaje privado al jardín</span>
+    <p style="color:var(--faded);font-size:.88rem;font-style:italic;margin-bottom:1rem;">Solo lo leerá El Jardín. No lo ve nadie más.</p>
+    <textarea class="reply-ta" id="privMsgText" placeholder="Escribe aquí tu mensaje privado..."></textarea>
+    <div class="upload-row">
+      <input type="file" id="msgFiles" multiple accept="image/*" style="display:none" onchange="previewFiles(this,'msg')">
+      <button class="upload-btn" onclick="document.getElementById('msgFiles').click()">📷 Adjuntar fotos</button>
+      <span class="upload-note">Hasta 4 imágenes</span>
+    </div>
+    <div class="img-previews" id="msgPreviews"></div>
+    <button class="send-btn" id="msgBtn" onclick="sendPrivateMsg()" style="margin-top:.75rem;">Enviar mensaje privado</button>
+  </div>`
+}
+
+function newPost(){
+  const cats=['doctrina','cuerpo','práctica','historia','preguntas','compartir']
+  return `<div class="np">
+    <div class="np-title">Nueva entrada</div>
+    <div class="np-sub">Escribe lo que llevas. El jardín escucha.</div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="npTitle" placeholder="¿De qué quieres hablar?" maxlength="120">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Categoría</label>
+      <div class="cats-row">${cats.map(c=>`<button class="cat-btn" data-cat="${c}" onclick="selCat(this)">${c}</button>`).join('')}</div>
+      <input type="hidden" id="npCat">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Entrada</label>
+      <textarea class="form-input" id="npContent" style="min-height:155px;resize:vertical;" placeholder="Escribe aquí..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fotos (opcional)</label>
+      <div class="upload-row">
+        <input type="file" id="postFiles" multiple accept="image/*" style="display:none" onchange="previewFiles(this,'post')">
+        <button class="upload-btn" onclick="document.getElementById('postFiles').click()">📷 Añadir fotos</button>
+        <span class="upload-note">Hasta 4 imágenes</span>
+      </div>
+      <div class="img-previews" id="postPreviews"></div>
+    </div>
+    <div id="npError"></div>
+    <div style="display:flex;gap:.8rem;margin-top:.5rem;">
+      <button class="send-btn" onclick="submitPost()">Publicar</button>
+      <button class="upload-btn" style="padding:.58rem 1.1rem;" onclick="S.view='list';render()">Cancelar</button>
+    </div>
+  </div>`
+}
+
+// ══════════════════════════════════════════
+// VISITAS (ADMIN)
+// ══════════════════════════════════════════
+function visitasPage(){
+  if(!S.isAdmin) return ''
+  const v=S.visitStats
+  if(!v) return `<div class="app-layout"><div class="content"><div class="inbox-header"><div class="inbox-title">Cargando visitas...</div></div></div></div>`
+  function statBox(label,val,sub=''){
+    return `<div style="border:1px solid var(--border);background:var(--panel);padding:1.5rem;text-align:center;min-width:140px;">
+      <div style="font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.3em;color:var(--gold);margin-bottom:.5rem;text-transform:uppercase;">${label}</div>
+      <div style="font-family:'Cormorant SC',serif;font-size:2.5rem;font-weight:300;color:var(--parch);line-height:1;">${val}</div>
+      ${sub?`<div style="font-size:.82rem;color:var(--faded);font-style:italic;margin-top:.3rem;">${sub}</div>`:''}
+    </div>`
+  }
+  return `<div class="app-layout"><div class="content">
+    <div class="inbox-header">
+      <div class="inbox-title">Contador de visitas</div>
+      <div class="inbox-sub">Solo cuenta cargas de página, sin datos personales</div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;">
+      ${statBox('Hoy — total',v.todayAll,`${v.todayAnon} sin cuenta`)}
+      ${statBox('Esta semana',v.weekAll,`${v.weekAnon} sin cuenta`)}
+      ${statBox('Total histórico',v.totalAll,`${v.totalAnon} sin cuenta`)}
+      ${statBox('Registrados',v.totalReg,'han visitado alguna vez')}
+    </div>
+    <div style="margin-bottom:1.5rem;">
+      <span style="font-family:'Cormorant SC',serif;font-size:.65rem;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:1rem;">Últimas 10 visitas</span>
+      <table style="width:100%;max-width:500px;border-collapse:collapse;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:.5rem .7rem;font-family:'Cormorant SC',serif;font-size:.6rem;letter-spacing:.22em;color:var(--gold);font-weight:400;">TIPO</th>
+          <th style="text-align:left;padding:.5rem .7rem;font-family:'Cormorant SC',serif;font-size:.6rem;letter-spacing:.22em;color:var(--gold);font-weight:400;">CUÁNDO</th>
+        </tr></thead>
+        <tbody>
+          ${v.last10.map(visit=>`<tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:.6rem .7rem;">
+              ${visit.is_registered
+                ?'<span style="color:var(--sepia);font-style:italic;font-size:.88rem;">Usuario registrado</span>'
+                :'<span style="color:var(--dim);font-style:italic;font-size:.88rem;">Visitante anónimo</span>'}
+            </td>
+            <td style="padding:.6rem .7rem;color:var(--dim);font-size:.83rem;">${fmtDate(visit.visited_at)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="border:1px solid var(--border);padding:1.2rem 1.5rem;background:rgba(196,151,58,.02);">
+      <p style="color:var(--faded);font-style:italic;font-size:.88rem;margin:0;">
+        ✓ Sin cookies · Sin IPs · Sin datos personales · Cumple GDPR
+      </p>
+    </div>
+  </div></div>`
+}
+
+// ══════════════════════════════════════════
+// USUARIOS (ADMIN)
+// ══════════════════════════════════════════
+function usuariosPage(){
+  if(!S.isAdmin) return ''
+  const now=new Date()
+  function isOnline(ts){ if(!ts) return false; return (now-new Date(ts))<5*60*1000 }
+  return `<div class="app-layout"><div class="content" style="max-width:800px;">
+    <div class="inbox-header">
+      <div class="inbox-title">Miembros del jardín</div>
+      <div class="inbox-sub">${S.usuarios.length} registrados</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);">
+            <th style="text-align:left;padding:.6rem .8rem;font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.25em;color:var(--gold);font-weight:400;">NOMBRE</th>
+            <th style="text-align:left;padding:.6rem .8rem;font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.25em;color:var(--gold);font-weight:400;">EMAIL</th>
+            <th style="text-align:left;padding:.6rem .8rem;font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.25em;color:var(--gold);font-weight:400;">REGISTRO</th>
+            <th style="text-align:left;padding:.6rem .8rem;font-family:'Cormorant SC',serif;font-size:.62rem;letter-spacing:.25em;color:var(--gold);font-weight:400;">ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${S.usuarios.map(u=>`
+            <tr style="border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='rgba(196,151,58,.04)'" onmouseout="this.style.background=''">
+              <td style="padding:.7rem .8rem;color:var(--parch);">
+                ${u.is_admin?'<span style="font-family:Cormorant SC,serif;font-size:.6rem;background:var(--gold);color:var(--dark);padding:.1rem .4rem;margin-right:.4rem;">ADMIN</span>':''}
+                ${esc(u.username||'—')}
+              </td>
+              <td style="padding:.7rem .8rem;color:var(--faded);font-style:italic;font-size:.87rem;">${esc(u.email||'—')}</td>
+              <td style="padding:.7rem .8rem;color:var(--dim);font-size:.83rem;">${u.created_at?new Date(u.created_at).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'}):'-'}</td>
+              <td style="padding:.7rem .8rem;">
+                ${isOnline(u.last_seen_at)
+                  ? '<span style="display:inline-flex;align-items:center;gap:.35rem;color:#8e8;font-size:.83rem;"><span style="width:7px;height:7px;border-radius:50%;background:#8e8;display:inline-block;"></span>Online</span>'
+                  : `<span style="color:var(--dim);font-size:.83rem;">${u.last_seen_at?fmtDate(u.last_seen_at):'Nunca'}</span>`}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    ${!S.usuarios.length?'<div class="empty"><div class="empty-orn">✦</div><div class="empty-t">No hay miembros aún</div></div>':''}
+  </div></div>`
+}
+
+// ══════════════════════════════════════════
+// INBOX (ADMIN)
+// ══════════════════════════════════════════
+function inboxPage(){
+  if(!S.isAdmin) return ''
+  return `<div class="app-layout"><div class="content">
+    <div class="inbox-header">
+      <div class="inbox-title">Mensajes privados</div>
+      <div class="inbox-sub">${S.messages.length} mensajes · ${S.unreadCount} sin leer</div>
+    </div>
+    ${!S.messages.length?`<div class="empty"><div class="empty-orn">✦</div><div class="empty-t">No hay mensajes</div></div>`:''}
+    ${S.messages.map(m=>`
+      <div class="msg-card ${m.is_read?'':'unread'}" id="msg-${m.id}">
+        <div class="msg-card-top">
+          <div>
+            <div class="msg-from">${esc(m.profiles?.username||'Anónimo')}</div>
+            <div class="msg-preview">${esc((m.content||'').slice(0,100))}${(m.content||'').length>100?'…':''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0;">
+            <span class="msg-date">${fmtDate(m.created_at)}</span>
+            <button class="del-btn" onclick="deleteMessage('${m.id}')" title="Borrar mensaje">✕</button>
+          </div>
+        </div>
+        ${S.expandedMsgs[m.id]?`
+          <div class="msg-full">${esc(m.content)}</div>
+          ${tryParse(m.image_urls).length?`<div class="msg-imgs">${tryParse(m.image_urls).map(u=>`<img class="msg-img" src="${u}" onclick="openLightbox('${u}')">`).join('')}</div>`:''}
+        `:''}
+        <div class="msg-actions">
+          <button class="msg-expand" onclick="toggleMsg('${m.id}')">${S.expandedMsgs[m.id]?'Cerrar':'Leer completo'}</button>
+          ${!m.is_read?`<button class="msg-expand" style="color:var(--gold);" onclick="markRead('${m.id}')">Marcar como leído</button>`:''}
+        </div>
+      </div>
+    `).join('')}
+  </div></div>`
+}
+
+// ══════════════════════════════════════════
+// SOLICITUDES COMPARTIR (ADMIN)
+// ══════════════════════════════════════════
+function solicitudesPage(){
+  if(!S.isAdmin) return ''
+  return `<div class="app-layout"><div class="content">
+    <div class="inbox-header">
+      <div class="inbox-title">Solicitudes — Compartir</div>
+      <div class="inbox-sub">${S.solicitudes.length} pendiente${S.solicitudes.length!==1?'s':''}</div>
+    </div>
+    ${!S.solicitudes.length?`<div class="empty"><div class="empty-orn">✦</div><div class="empty-t">No hay solicitudes pendientes</div></div>`:''}
+    ${S.solicitudes.map(sol=>`
+      <div class="sol-card">
+        <div>
+          <div class="sol-name">${esc(sol.profiles?.username||'Anónimo')}</div>
+          <div class="sol-date">Solicitó acceso ${fmtDate(sol.created_at)}</div>
+        </div>
+        <div class="sol-btns">
+          <button class="sol-ok" onclick="decideCompartir('${sol.id}','approved')">✓ Aceptar</button>
+          <button class="sol-no" onclick="decideCompartir('${sol.id}','denied')">✕ Denegar</button>
+        </div>
+      </div>
+    `).join('')}
+  </div></div>`
+}
+
+// ══════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════
+function goHome(){ S.page='home'; render() }
+
+async function goForum(){
+  if(!S.user){
+    S.afterLogin=async()=>{
+      S.page='forum';S.view='list';S.postFiles=[];S.replyFiles=[]
+      await Promise.all([loadPosts(),loadStats()])
+      render()
+    }
+    openModal('login'); return
+  }
+  S.page='forum';S.view='list';S.postFiles=[];S.replyFiles=[]
+  await Promise.all([loadPosts(),loadStats()])
+  render()
+}
+
+async function goInbox(){
+  S.page='inbox'
+  await loadMessages()
+  render()
+}
+
+async function goSolicitudes(){
+  S.page='solicitudes'
+  await loadSolicitudes()
+  render()
+}
+
+async function goUsuarios(){
+  S.page='usuarios'
+  await loadUsuarios()
+  render()
+}
+
+async function goVisitas(){
+  S.page='visitas'
+  await loadVisitStats()
+  render()
+}
+
+async function backToList(){ S.view='list'; await loadPosts(); render() }
+
+async function openPost(id){
+  if(S.category==='compartir'||S.posts.find(p=>p.id===id)?.category==='compartir'){
+    if(!S.isAdmin&&S.compartirAccess!=='approved') return
+  }
+  await loadPost(id); S.view='post'; S.replyFiles=[]; S.msgFiles=[]; render()
+  // Load photo views for admin after render
+  if(S.isAdmin && S.post?.image_urls) {
+    const views = await loadPhotoViews(id)
+    const pvSection = document.getElementById('pvSection')
+    if(pvSection) {
+      if(!views.length){
+        pvSection.innerHTML='<span class="pv-label">👁 Nadie ha visto las fotos aún</span>'
+      } else {
+        pvSection.innerHTML=`<span class="pv-label">👁 Visto por ${views.length} ${views.length===1?'persona':'personas'}</span>`
+          +views.map(v=>`<div class="pv-item">${esc(v.username)} · ${fmtDate(v.viewed_at)}</div>`).join('')
+      }
+    }
+  }
+}
+
+async function setCategory(cat){
+  S.category=cat==='null'?null:cat
+  if(S.category==='compartir'&&!S.isAdmin) await checkCompartirAccess()
+  await loadPosts(); S.view='list'; render()
+}
+
+function selCat(btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'))
+  btn.classList.add('sel')
+  document.getElementById('npCat').value=btn.dataset.cat
+}
+
+function scrollToContact(){ S.page='home'; render(); setTimeout(()=>document.getElementById('contacto')?.scrollIntoView({behavior:'smooth'}),100) }
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function openModal(mode='login'){
+  authMode=mode; switchTab(mode)
+  document.getElementById('authModal').classList.remove('hidden')
+  document.getElementById('authMsg').innerHTML=''
+  setTimeout(()=>document.getElementById('fEmail')?.focus(),100)
+}
+function closeModal(){ document.getElementById('authModal').classList.add('hidden'); S.afterLogin=null }
+function switchTab(mode){
+  authMode=mode
+  document.getElementById('tabLogin').classList.toggle('active',mode==='login')
+  document.getElementById('tabReg').classList.toggle('active',mode==='register')
+  document.getElementById('usernameRow').style.display=mode==='register'?'block':'none'
+  document.getElementById('authBtn').textContent=mode==='login'?'Entrar':'Unirse al jardín'
+  document.getElementById('authMsg').innerHTML=''
+}
+function showAuthMsg(msg,ok=false){
+  document.getElementById('authMsg').innerHTML=`<div class="${ok?'msg-ok':'msg-error'}">${msg}</div>`
+}
+// Lista de dominios de email temporal/desechable
+const TEMP_DOMAINS=['mailinator.com','guerrillamail.com','temp-mail.org','throwaway.email',
+  'yopmail.com','sharklasers.com','guerrillamailblock.com','grr.la','guerrillamail.info',
+  'guerrillamail.biz','guerrillamail.de','guerrillamail.net','guerrillamail.org','spam4.me',
+  'trashmail.com','trashmail.me','trashmail.net','trashmail.at','trashmail.io','trashmail.xyz',
+  'tempmail.com','temp-mail.io','10minutemail.com','10minutemail.net','10minutemail.org',
+  'dispostable.com','maildrop.cc','mailnull.com','mailnesia.com','spamgourmet.com',
+  'spamgourmet.net','spamgourmet.org','spamgourmet.com','spamgourmet.net','spamgourmet.org',
+  'nwldx.com','getairmail.com','fakeinbox.com','mailismagic.com','incognitomail.com',
+  'spamhereplease.com','discard.email','spamfree24.org','mailexpire.com','filzmail.com',
+  'trashmail.fr','mytrashmail.com','sogetthis.com','safetymail.info','deadaddress.com',
+  'discardmail.com','discardmail.de','spamspot.com','spamstack.net','putthisinyourspamdatabase.com',
+  'mailnew.com','spamgob.com','binkmail.com','bobmail.info','chammy.info','devnullmail.com',
+  'letthemeatspam.com','mailbidon.com','maileater.com','moncourrier.fr.nf','monemail.fr.nf',
+  'monmail.fr.nf','papierkorb.me','sandelf.de','shut.ws','spamfree.eu','spamwc.de',
+  'superrito.com','tempr.email','trasz.com','turual.com','uroid.com','willselfdestruct.com',
+  'trbvm.com','mailtemp.info','tempinbox.com','fakemailgenerator.com','spamgape.com',
+  'yomailapi.com','tempail.com','myfastmail.com','emailondeck.com','getnada.com',
+  'throwam.com','burnermail.io','33mail.com','spamevader.com','emailtemp.org',
+  'tempmailaddress.com','diseasesofpigs.com','tempm.com','mailnow.top','nowmymail.com']
+
+async function doAuth(){
+  const email=document.getElementById('fEmail')?.value?.trim()
+  const pass=document.getElementById('fPass')?.value
+  if(!email||!pass){showAuthMsg('Completa email y contraseña');return}
+  // Bloquear emails temporales
+  if(authMode==='register'){
+    const domain=email.split('@')[1]?.toLowerCase()
+    if(TEMP_DOMAINS.includes(domain)){
+      showAuthMsg('Este tipo de email no está permitido. Usa tu email personal.');return
+    }
+  }
+  document.getElementById('authBtn').disabled=true
+  if(authMode==='login'){
+    const{error}=await sb.auth.signInWithPassword({email,password:pass})
+    if(error){showAuthMsg('Email o contraseña incorrectos');document.getElementById('authBtn').disabled=false}
+  }else{
+    const username=document.getElementById('fUsername')?.value?.trim()
+    if(!username){showAuthMsg('Elige un nombre para el jardín');document.getElementById('authBtn').disabled=false;return}
+    if(pass.length<6){showAuthMsg('Mínimo 6 caracteres');document.getElementById('authBtn').disabled=false;return}
+    const{data,error}=await sb.auth.signUp({email,password:pass})
+    if(error){showAuthMsg(error.message);document.getElementById('authBtn').disabled=false;return}
+    if(data.user) await sb.from('profiles').upsert({id:data.user.id,username,is_admin:email===ADMIN})
+    showAuthMsg('Revisa tu email para confirmar tu cuenta.',true)
+  }
+  document.getElementById('authBtn').disabled=false
+}
+document.getElementById('authModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()})
+
+// ══════════════════════════════════════════
+// FOTOS
+// ══════════════════════════════════════════
+function previewFiles(input,ctx){
+  const files=Array.from(input.files).slice(0,4)
+  const key={post:'postFiles',reply:'replyFiles',msg:'msgFiles'}[ctx]
+  S[key]=files
+  const cid={post:'postPreviews',reply:'replyPreviews',msg:'msgPreviews'}[ctx]
+  const container=document.getElementById(cid); if(!container)return
+  container.innerHTML=files.map((f,i)=>{
+    const url=URL.createObjectURL(f)
+    return `<div class="img-preview-item"><img src="${url}"><button class="img-remove" onclick="removeFile(${i},'${ctx}')">✕</button></div>`
+  }).join('')
+}
+function removeFile(idx,ctx){
+  const key={post:'postFiles',reply:'replyFiles',msg:'msgFiles'}[ctx]
+  S[key].splice(idx,1); previewFiles({files:S[key]},ctx)
+}
+async function uploadImages(files,folder){
+  const urls=[]
+  for(const file of files){
+    const ext=file.name.split('.').pop().toLowerCase()||'jpg'
+    const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const{error}=await sb.storage.from('post-images').upload(path,file)
+    if(!error){const{data}=sb.storage.from('post-images').getPublicUrl(path);urls.push(data.publicUrl)}
+  }
+  return urls
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+async function submitPost(){
+  const title=document.getElementById('npTitle')?.value?.trim()
+  const content=document.getElementById('npContent')?.value?.trim()
+  const cat=document.getElementById('npCat')?.value||null
+  const errEl=document.getElementById('npError')
+  if(!title){errEl.innerHTML='<div class="msg-error">El título es necesario</div>';return}
+  if(!content){errEl.innerHTML='<div class="msg-error">Escribe algo antes de publicar</div>';return}
+  // Check compartir access
+  if(cat==='compartir'&&!S.isAdmin){
+    if(S.compartirAccess!=='approved'){errEl.innerHTML='<div class="msg-error">Necesitas acceso aprobado para publicar en Compartir</div>';return}
+  }
+  const btn=document.querySelector('.np .send-btn');if(btn){btn.disabled=true;btn.textContent='Publicando...'}
+  let imageUrls=[]
+  if(S.postFiles.length) imageUrls=await uploadImages(S.postFiles,`posts/${S.user.id}`)
+  const{error}=await sb.from('posts').insert({user_id:S.user.id,title,content,category:cat,is_admin_post:S.isAdmin,image_urls:imageUrls.length?JSON.stringify(imageUrls):null})
+  if(error){errEl.innerHTML='<div class="msg-error">Error al publicar</div>';if(btn){btn.disabled=false;btn.textContent='Publicar'};return}
+  S.postFiles=[];S.page='forum';S.view='list';await Promise.all([loadPosts(),loadStats()]);render()
+}
+
+async function submitReply(){
+  const content=document.getElementById('replyText')?.value?.trim();if(!content)return
+  const btn=document.getElementById('replyBtn');btn.disabled=true;btn.textContent='Enviando...'
+  let imageUrls=[]
+  if(S.replyFiles.length) imageUrls=await uploadImages(S.replyFiles,`replies/${S.user.id}`)
+  const{error}=await sb.from('replies').insert({post_id:S.post.id,user_id:S.user.id,content,is_admin_reply:S.isAdmin,image_urls:imageUrls.length?JSON.stringify(imageUrls):null})
+  if(!error&&S.isAdmin) await sb.from('posts').update({has_garden_reply:true}).eq('id',S.post.id)
+  S.replyFiles=[];await loadPost(S.post.id);render()
+}
+
+async function sendPrivateMsg(){
+  const content=document.getElementById('privMsgText')?.value?.trim()
+  if(!content){alert('Escribe algo antes de enviar');return}
+  const btn=document.getElementById('msgBtn');btn.disabled=true;btn.textContent='Enviando...'
+  let imageUrls=[]
+  if(S.msgFiles.length) imageUrls=await uploadImages(S.msgFiles,`msgs/${S.user.id}`)
+  const{error}=await sb.from('private_messages').insert({user_id:S.user.id,content,image_urls:imageUrls.length?JSON.stringify(imageUrls):null})
+  if(!error){
+    document.getElementById('privMsgText').value=''
+    S.msgFiles=[]
+    const pre=document.getElementById('msgPreviews');if(pre)pre.innerHTML=''
+    btn.textContent='✓ Enviado'
+    setTimeout(()=>{btn.disabled=false;btn.textContent='Enviar mensaje privado'},2500)
+  }else{btn.disabled=false;btn.textContent='Enviar mensaje privado'}
+}
+
+// ══════════════════════════════════════════
+// INBOX ACTIONS
+// ══════════════════════════════════════════
+async function toggleMsg(id){
+  if(!S.expandedMsgs[id]){
+    S.expandedMsgs[id]=true
+    // Mark as read
+    await sb.from('private_messages').update({is_read:true}).eq('id',id)
+    S.unreadCount=Math.max(0,S.unreadCount-1)
+    const msg=S.messages.find(m=>m.id===id);if(msg)msg.is_read=true
+  }else{delete S.expandedMsgs[id]}
+  render()
+}
+async function markRead(id){
+  await sb.from('private_messages').update({is_read:true}).eq('id',id)
+  const msg=S.messages.find(m=>m.id===id);if(msg)msg.is_read=true
+  S.unreadCount=Math.max(0,S.unreadCount-1); render()
+}
+async function deleteMessage(id){
+  if(!confirm('¿Borrar este mensaje?'))return
+  await sb.from('private_messages').delete().eq('id',id)
+  S.messages=S.messages.filter(m=>m.id!==id)
+  S.unreadCount=S.messages.filter(m=>!m.is_read).length; render()
+}
+
+// ══════════════════════════════════════════
+// COMPARTIR ACCESS
+// ══════════════════════════════════════════
+async function requestCompartirAccess(){
+  if(!S.user){openModal('register');return}
+  const{error}=await sb.from('compartir_access').insert({user_id:S.user.id,status:'pending'})
+  if(!error){S.compartirAccess='pending';render()}
+  else if(error.code==='23505'){S.compartirAccess='pending';render()}
+}
+
+async function decideCompartir(solId,status){
+  await sb.from('compartir_access').update({status}).eq('id',solId)
+  S.solicitudes=S.solicitudes.filter(s=>s.id!==solId); render()
+}
+
+// ══════════════════════════════════════════
+// DELETE (ADMIN)
+// ══════════════════════════════════════════
+async function deletePost(id){
+  if(!confirm('¿Borrar esta entrada y todas sus respuestas?'))return
+  await sb.from('replies').delete().eq('post_id',id)
+  await sb.from('posts').delete().eq('id',id)
+  if(S.view==='post'){S.view='list';await loadPosts();render()}
+  else{S.posts=S.posts.filter(p=>p.id!==id);render()}
+}
+
+async function deleteReply(id){
+  if(!confirm('¿Borrar esta respuesta?'))return
+  await sb.from('replies').delete().eq('id',id)
+  S.replies=S.replies.filter(r=>r.id!==id); render()
+}
+
+// ══════════════════════════════════════════
+// CONTACTO (mailto)
+// ══════════════════════════════════════════
+function sendContact(){
+  const name=document.getElementById('cName')?.value?.trim()
+  const email=document.getElementById('cEmail')?.value?.trim()
+  const msg=document.getElementById('cMsg')?.value?.trim()
+  const st=document.getElementById('cStatus')
+  if(!msg){st.innerHTML='<div class="msg-error" style="margin-bottom:.8rem;">Escribe algo antes de enviar.</div>';return}
+  const sub=encodeURIComponent(`Mensaje desde El Jardín${name?' de '+name:''}`)
+  const body=encodeURIComponent(`${name?'Nombre: '+name+'\n':''}${email?'Email: '+email+'\n':''}\nMensaje:\n${msg}`)
+  window.location.href=`mailto:${ADMIN}?subject=${sub}&body=${body}`
+  st.innerHTML='<div class="msg-ok" style="margin-bottom:.8rem;">Abriendo tu cliente de email...</div>'
+  document.getElementById('cName').value='';document.getElementById('cEmail').value='';document.getElementById('cMsg').value=''
+}
+
+// ══════════════════════════════════════════
+// LIGHTBOX / UTILS
+// ══════════════════════════════════════════
+function openLightbox(url, postId=''){
+  currentLbUrl = url
+  document.getElementById('lightboxImg').src = url
+  document.getElementById('lightbox').classList.remove('hidden')
+  const wmEl = document.getElementById('lbWm')
+  const dlBtn = document.getElementById('lbDlBtn')
+  if(S.isAdmin){
+    wmEl.style.display='none'
+    dlBtn.style.display='block'
+  } else {
+    const inner = document.getElementById('lbWmInner')
+    inner.innerHTML = wmHtml(S.profile?.username||'visitante',8,5)
+    wmEl.style.display='block'
+    dlBtn.style.display='none'
+    if(postId) logPhotoView(postId)
+  }
+}
+function closeLightbox(){ closeLightbox(); currentLbUrl='' }
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>')}
+function fmtDate(iso){if(!iso)return '';const d=new Date(iso),now=new Date(),diff=now-d;if(diff<60000)return 'ahora mismo';if(diff<3600000)return `hace ${Math.floor(diff/60000)} min`;if(diff<86400000)return `hace ${Math.floor(diff/3600000)} h`;return d.toLocaleDateString('es-ES',{day:'numeric',month:'short'})}
+function tryParse(s){try{return s?JSON.parse(s):[]}catch{return[]}}
+
+// ══════════════════════════════════════════
+// WATERMARK & PHOTO PROTECTION
+// ══════════════════════════════════════════
+let currentLbUrl = ''
+
+function wmHtml(username, rows=6, cols=4) {
+  const t = esc(username) + ' · El Jardín'
+  const row = Array(cols).fill(`<span class="wm-text">${t}</span>`).join('')
+  return Array(rows).fill(`<div class="wm-row">${row}</div>`).join('')
+}
+
+function protectedImg(url, postId='', small=false) {
+  if(!url) return ''
+  const size = small ? 'max-width:65px;max-height:48px;' : 'max-width:240px;max-height:200px;'
+  if(S.isAdmin) {
+    return `<div class="admin-img-wrap" onclick="openLightbox('${url}','${postId}')">
+      <img src="${url}" style="${size}object-fit:cover;border:1px solid var(--border);" draggable="false">
+      <a class="dl-btn" onclick="event.stopPropagation();downloadImage('${url}')">⬇</a>
+    </div>`
+  }
+  const wm = wmHtml(S.profile?.username||'visitante', small?3:6, small?2:4)
+  return `<div class="protected-wrap" style="${size}object-fit:cover;" 
+    oncontextmenu="return false" ondragstart="return false"
+    onclick="openLightbox('${url}','${postId}')">
+    <img src="${url}" style="${size}object-fit:cover;border:1px solid var(--border);" draggable="false">
+    <div class="wm-overlay"><div class="wm-inner">${wm}</div></div>
+  </div>`
+}
+
+async function logPhotoView(postId) {
+  if(!S.user||!postId||S.isAdmin) return
+  await sb.from('photo_views').insert({
+    post_id: postId,
+    user_id: S.user.id,
+    username: S.profile?.username||'Anónimo'
+  })
+}
+
+async function loadPhotoViews(postId) {
+  if(!S.isAdmin||!postId) return []
+  const {data} = await sb.from('photo_views')
+    .select('username, viewed_at')
+    .eq('post_id', postId)
+    .order('viewed_at', {ascending:false})
+  return data||[]
+}
+
+async function downloadImage(url) {
+  try {
+    const res = await fetch(url)
+    const blob = await res.blob()
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'jardin-' + Date.now() + '.' + (blob.type.split('/')[1]||'jpg')
+    a.click()
+    URL.revokeObjectURL(a.href)
+  } catch(e) { window.open(url, '_blank') }
+}
+
+
+init()
+</script>
+</body>
+</html>
